@@ -2,4 +2,7 @@ th.py
 mobilenet_ssd
 output
 videos
+config/configtwilio.json 
+people_counter_openvino.py~
+
 

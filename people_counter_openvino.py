@@ -35,11 +35,11 @@ import threading
 
 count = 0
 
-connection = psycopg2.connect(user = "userok",
-                                  password = "passwordets",
-                                  host = "localhost",
-                                  port = "15432",
-                                  database = "dbs")
+connection = psycopg2.connect(user = "oydzosco",
+                                  password = "XSZ-V55Hq-xmnusuNnG9ajxeHS6aKSKf",
+                                  host = "balarama.db.elephantsql.com",
+                                  port = "5432",
+                                  database = "oydzosco")
 print("PostgreSQL connection is open")
 cursor = connection.cursor()
 cursor.execute('CREATE TABLE IF NOT EXISTS trackhistory (id SERIAL,Track_time time NOT NULL,Track_date date NOT NULL,PRIMARY KEY (ID));')
@@ -68,7 +68,6 @@ def sending_on_thingspeak():
     count = 0
     while True:
         time.sleep(15)
-        print(count)
         if count == -1:
             return 
         else:
@@ -227,8 +226,7 @@ def recognition():
 
                     # compute the (x, y)-coordinates of the bounding box
                     # for the object
-                    box = detections[0, 0, i, 3:7] * np.array(
-                        [W, H, W, H])
+                    box = detections[0, 0, i, 3:7] * np.array( [W, H, W, H])
                     (startX, startY, endX, endY) = box.astype("int")
 
                     # construct a dlib rectangle object from the bounding
@@ -374,62 +372,22 @@ def recognition():
     # close any open windows
     cv2.destroyAllWindows()
     count = -1
-
+    if(connection):
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
 def main():
     countdown_thread = threading.Thread(target = sending_on_thingspeak)
     countdown_thread2 = threading.Thread(target = recognition)
     countdown_thread2.start()
     countdown_thread.start()
     
-    
     countdown_thread2.join()  
     print("Join 1")
     countdown_thread.join()
     print("Join 2")
 
-    
-    datafromwebsite=urllib.request.urlopen("https://api.thingspeak.com/channels/1048946/feeds.json?api_key=SWRIFBHZ8Z9QQ8AX&results=2")
-    print (datafromwebsite)
-
 if __name__ == "__main__":
     main()
-#
 
-#table = pd.read_sql_query('''SELECT * FROM trackhistory''',connection); print(table) 
-#connection.commit()
-#if(connection):
-#    cursor.close()
-#    connection.close()
-#    print("PostgreSQL connection is closed")
-
-#hour = pd.read_sql_query(''' SELECT COUNT(id),DATE_PART('hour',track_time) FROM trackhistory GROUP BY DATE_PART('hour',track_time) ORDER BY DATE_PART('hour',track_time)''',connection)
-#week = pd.read_sql_query(''' SELECT COUNT(id),DATE_PART('week',track_date) FROM trackhistory GROUP BY DATE_PART('week',track_date) ORDER BY DATE_PART('week',track_date)''',connection)
-#day = pd.read_sql_query(''' SELECT COUNT(id),DATE_PART('day',track_date) FROM trackhistory GROUP BY DATE_PART('day',track_date) ORDER BY DATE_PART('day',track_date)''',connection)
-  #optional = pd.read_sql_query(''' SELECT COUNT(id), FROM trackhistory WHERE track_time BETWEEN timestart AND timend AND track_date BETWEEN chosenDateFirst AND chosenDateLast''')
-
-#print(day)
-
-#dateToday = datetime.date.today().strftime("%Y-%m-%d")
-#chosenDateFirst = "2020-05-27"
-#chosenDateLast = "2020-05-27"
-#timeToday = datetime.today().strftime("%H:%M:%S")
-
-
-#H = hour.plot(x='date_part', y='count', kind = 'bar', title= 'Attendance Diagram', sharex=False)
-#H.set_xlabel('Hours per {}'.format(dateToday))
-#H.set_ylabel('Number Of Attendants')
-
-
-    #week.plot(x='date_part', y='count', kind = 'bar', title= dateToday)
-    # optional.plot(x='date_part', y='count', title= dateToday)
-#D = day.plot(x='date_part', y='count', kind = 'bar', title= 'Attendance Diagram', legend=False, style= 'dict')
-#D.set_xlabel('Days between')
-#D.set_ylabel('Number Of Attendants')
-
-
-    # W = week.plot(x='date_part', y='count', kind = 'bar', title= 'Attendance Diagram')
-    # W.set_xlabel('Days between {} and {}'.format(chosenDateFirst, chosenDateLast))
-    # W.set_ylabel('Number Of Attendants')
-
-#plt.show()
 
