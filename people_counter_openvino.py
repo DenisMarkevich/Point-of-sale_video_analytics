@@ -75,7 +75,7 @@ def sending_on_thingspeak():
             count = 0
             
 def recognition():
-    global count
+    global count, cursor, connection
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
     ap.add_argument("-t", "--target", type=str, required=True,
@@ -290,9 +290,8 @@ def recognition():
             if to is None:
                 to = TrackableObject(objectID,centroid,datetime.datetime.now())
                 cursor.execute('INSERT INTO trackhistory (track_time,track_date) VALUES (%s,%s)', (to.dt,to.dt))
-                #urllib.request.urlopen("https://api.thingspeak.com/update?api_key="+API+"&field1=0"+str(1))
                 count += 1
-
+                connection.commit()
             # otherwise, there is a trackable object so we can utilize it
             # to determine direction
             else:
